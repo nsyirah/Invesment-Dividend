@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   runApp(DividendCalculatorApp());
@@ -84,6 +85,15 @@ class _HomePageState extends State<HomePage> {
     monthlyDividend = null;
     totalDividend = null;
     setState(() {});
+  }
+
+  void _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not launch URL')),
+      );
+    }
   }
 
   @override
@@ -174,26 +184,42 @@ class _HomePageState extends State<HomePage> {
           ),
           SizedBox(height: 24),
           if (monthlyDividend != null && totalDividend != null)
-            Card(
-              color: Colors.teal[50],
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              elevation: 3,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(children: [
-                  Text('Result',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  Divider(),
-                  Text(
-                    'Monthly Dividend: RM ${monthlyDividend!.toStringAsFixed(2)}',
-                    style: TextStyle(fontSize: 16),
+            Column(
+              children: [
+                Card(
+                  color: Colors.teal[50],
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  elevation: 3,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(children: [
+                      Text('Result',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      Divider(),
+                      Text(
+                        'Monthly Dividend: RM ${monthlyDividend!.toStringAsFixed(2)}',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      Text(
+                        'Total Dividend: RM ${totalDividend!.toStringAsFixed(2)}',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ]),
                   ),
-                  Text(
-                    'Total Dividend: RM ${totalDividend!.toStringAsFixed(2)}',
-                    style: TextStyle(fontSize: 16),
+                ),
+                SizedBox(height: 20),
+                GestureDetector(
+                  onTap: () => _launchURL('https://github.com/nsyirah/Invesment-Dividend'),
+                  child: Text(
+                    'View GitHub Repository',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.brown[800],
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
-                ]),
-              ),
+                ),
+              ],
             ),
         ]),
       ),
@@ -260,7 +286,7 @@ class AboutPage extends StatelessWidget {
               );
             },
             child: Text(
-              'GitHub: https://github.com/yourusername/Dividend_Calculator',
+              'https://nsyirah.github.io/Invesment-Dividend/',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.teal,
